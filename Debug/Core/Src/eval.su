@@ -1,4 +1,5 @@
-eval.c:30:6:System_Control	8	static
-eval.c:46:6:Blink_LED	16	static
-eval.c:60:6:Update_Timers	4	static
-eval.c:76:6:HAL_TIM_PeriodElapsedCallback	16	static
+eval.c:46:6:System_Control	8	static
+eval.c:64:6:Update_Timers	4	static
+eval.c:77:6:UART_Service	8	static
+eval.c:96:6:Blink_LED	16	static
+eval.c:123:6:HAL_TIM_PeriodElapsedCallback	16	static
