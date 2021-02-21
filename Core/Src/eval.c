@@ -9,10 +9,14 @@
 #define BLINK_PERIOD_500MS	500
 #define BLINK_PERIOD_250MS	250
 
+#define TEMP_ADC_GAIN		0.0342
+#define TEMP_ADC_OFFSET		14
+
 #define MESSAGE_LENGTH		128
 
 // Function Prototypes
 void Update_Timers(void);
+void ADC_Service(void);
 void UART_Service(void);
 void Blink_LED(uint16_t period);
 
@@ -32,9 +36,13 @@ uint32_t blinkCounter_1ms = 0U;
 
 uint32_t UART_Counter_1ms = 0U;
 
-uint8_t msg[MESSAGE_LENGTH] = {0};
+char msg[MESSAGE_LENGTH] = {0};
 
 uint16_t blinkCnt = 0U;
+
+uint16_t temp_ADC = 0U;
+
+float SysTemp = 0;
 
 
 /* System_Control()
@@ -49,8 +57,10 @@ void System_Control()
 	while(INFINITY)
 	{
 		Update_Timers();
+		ADC_Service();
 		UART_Service();
-		Blink_LED(BLINK_PERIOD_500MS);
+		Blink_LED(BLINK_PERIOD_250MS);
+
 	}
 }
 
@@ -74,15 +84,37 @@ void Update_Timers(void)
 }
 
 
+/* ADC_Service()
+ *
+ * Polls ADC1 for System Temp. Calculates real deg C.
+ * Args: N/A
+ * Returns: N/A
+ */
+void ADC_Service()
+{
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	temp_ADC = HAL_ADC_GetValue(&hadc1);
+
+	SysTemp = TEMP_ADC_GAIN * temp_ADC + TEMP_ADC_OFFSET;
+}
+
+
+/* UART_Service()
+ *
+ * Transmits 128 bit UART message at defined period
+ * Args: N/A
+ * Returns: N/A
+ */
 void UART_Service()
 {
 	if(UART_PERIOD_1S <= UART_Counter_1ms)
 	{
 		UART_Counter_1ms = 0U;
 
-		snprintf(msg, MESSAGE_LENGTH, "Blink Count: %d\n\r", blinkCnt);
+		sprintf(msg, "Temp raw: %hu\n\r", temp_ADC);
 
-		HAL_UART_Transmit(&huart3, &msg, sizeof(msg), 100);
+		HAL_UART_Transmit(&huart3, (uint8_t*)msg, sizeof(msg), 100);
 	}
 }
 
