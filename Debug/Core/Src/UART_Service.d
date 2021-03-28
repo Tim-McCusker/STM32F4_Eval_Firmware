@@ -1,5 +1,5 @@
-Core/Src/eval.o: ../Core/Src/eval.c ../Core/Inc/eval.h ../Core/Inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/UART_Service.o: ../Core/Src/UART_Service.c ../Core/Inc/eval.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -34,8 +34,7 @@ Core/Src/eval.o: ../Core/Src/eval.c ../Core/Inc/eval.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
- ../Core/Inc/eval_timers.h ../Core/Inc/ADC_Service.h \
- ../Core/Inc/UART_Service.h ../Core/Inc/LED_Service.h
+ ../Core/Inc/eval_timers.h ../Core/Inc/UART_Service.h
 
 ../Core/Inc/eval.h:
 
@@ -113,8 +112,4 @@ Core/Src/eval.o: ../Core/Src/eval.c ../Core/Inc/eval.h ../Core/Inc/main.h \
 
 ../Core/Inc/eval_timers.h:
 
-../Core/Inc/ADC_Service.h:
-
 ../Core/Inc/UART_Service.h:
-
-../Core/Inc/LED_Service.h:

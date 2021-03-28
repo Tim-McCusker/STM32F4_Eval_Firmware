@@ -11,9 +11,9 @@
 
 typedef enum LED_Mode_e
 {
-	MODE_ON,
-	MODE_BLINK,
-	MODE_OFF
+	MODE_OFF = 0U,
+	MODE_SOLID = 1U,
+	MODE_BLINK = 2U
 }LED_Mode_t;
 
 

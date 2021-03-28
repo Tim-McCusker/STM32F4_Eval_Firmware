@@ -50,15 +50,15 @@ typedef struct SYS_Timer
 }system_timer_t;
 
 
-enum system_timers
+const enum system_timers
 {
 	ADC_SAMPLE = 0U,
 	LED_BLINK = 1U,
 	UART_TX = 2U
-};
+}system_timers;
 
 
-system_timer_t timer[NUM_SYS_TIMERS];
+volatile system_timer_t timer[NUM_SYS_TIMERS];
 
 
 #endif /* INC_EVAL_TIMERS_H_ */

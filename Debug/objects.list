@@ -1,4 +1,6 @@
+"Core/Src/ADC_Service.o"
 "Core/Src/LED_Service.o"
+"Core/Src/UART_Service.o"
 "Core/Src/eval.o"
 "Core/Src/main.o"
 "Core/Src/stm32f4xx_hal_msp.o"

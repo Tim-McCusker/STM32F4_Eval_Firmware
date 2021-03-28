@@ -3,19 +3,15 @@
 
 #include "eval.h"
 #include "eval_timers.h"
+#include "ADC_Service.h"
+#include "UART_Service.h"
 #include "LED_Service.h"
 
 //Private defines
-#define TEMP_ADC_GAIN		0.0342
-#define TEMP_ADC_OFFSET		14
 
-#define MESSAGE_LENGTH		128
 
 // Function Prototypes
 void Update_Timers(void);
-void ADC_Service(void);
-void UART_Service(void);
-void LED_Service();
 void initTimers(void);
 
 // HAL Structs
@@ -26,16 +22,10 @@ _Bool tim11_OvrFlo_Flag = FALSE;
 
 const uint16_t system_timer_overflow[NUM_SYS_TIMERS] =
 {
-		TIME1MS_1MS,	// ADC_Sample
-		TIME1MS_500MS,	// LED_BLINK
-		TIME1MS_1S	    // UART_TX
+		TIME1MS_1MS,	// 0 - ADC_Sample
+		TIME1MS_500MS,	// 1 - LED_BLINK
+		TIME1MS_1S	    // 2 - UART_TX
 };
-
-char msg[MESSAGE_LENGTH] = {0};
-
-uint16_t temp_ADC = 0U;
-
-float SysTemp = 0;
 
 
 /* System_Control()
@@ -62,7 +52,7 @@ void System_Control()
 
 /* Update_Timers()
  *
- * Updates global 1ms counters attached to hwtim11
+ * Update system timers
  * Args: N/A
  * Returns: N/A
  */
@@ -88,42 +78,6 @@ void Update_Timers(void)
 				timer[idx].t = 0U;
 			}
 		}
-	}
-}
-
-
-/* ADC_Service()
- *
- * Polls ADC1 for System Temp. Calculates real deg C.
- * Args: N/A
- * Returns: N/A
- */
-void ADC_Service()
-{
-	HAL_ADC_Start(&hadc1);
-	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-	temp_ADC = HAL_ADC_GetValue(&hadc1);
-
-	SysTemp = TEMP_ADC_GAIN * temp_ADC + TEMP_ADC_OFFSET;
-}
-
-
-/* UART_Service()
- *
- * Transmits 128 bit UART message at defined period
- * Args: N/A
- * Returns: N/A
- */
-void UART_Service()
-{
-	if(timer[UART_TX].flag)
-	{
-		timer[UART_TX].flag = FALSE;
-		timer[UART_TX].t = 0U;
-
-		sprintf(msg, "Temp raw: %hu\n\r", temp_ADC);
-
-		HAL_UART_Transmit(&huart3, (uint8_t*)msg, sizeof(msg), 100);
 	}
 }
 

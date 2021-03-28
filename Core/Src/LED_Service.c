@@ -16,33 +16,47 @@ LED_Mode_t LED_Mode = MODE_OFF;
 
 uint16_t blinkCnt = 0U;
 
-void Blink_LED(LED_Mode_t mode);
+void LED_Control(LED_Mode_t mode);
 
 
 /* LED_Service()
  *
- * Blinks R2D2's led at period configured in eval_timers.h
- * Returns: N/A
+ * Runs LED_Service
  */
-void LED_Service()
+void LED_Service(void)
 {
-    Blink_LED(LED_Mode);
+	LED_Control(LED_Mode);
 }
 
 
+/* LED_Set_Mode()
+ *
+ * Update LED mode
+ * Arg: (LED_Mode_t) mode - LED mode defined in LED_Service.h
+ */
 void LED_Set_Mode(LED_Mode_t mode)
 {
 	LED_Mode = mode;
 }
 
 
-void Blink_LED(LED_Mode_t mode)
+/* LED_Control()
+ *
+ * Handle LED given current LED mode
+ * Arg: (LED_Mode_t) mode - LED mode defined in LED_Service.h
+ */
+void LED_Control(LED_Mode_t mode)
 {
 	static _Bool led_level = LEVEL_LOW;
 
 	switch(mode)
 	{
-	case MODE_ON:
+	case MODE_OFF:
+		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, LEVEL_LOW);
+
+	break;
+
+	case MODE_SOLID:
 		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, LEVEL_HIGH);
 
 	break;
@@ -61,11 +75,6 @@ void Blink_LED(LED_Mode_t mode)
 				blinkCnt++;
 			}
 		}
-
-	break;
-
-	case MODE_OFF:
-		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, LEVEL_LOW);
 
 	break;
 
