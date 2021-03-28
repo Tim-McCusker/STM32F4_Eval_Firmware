@@ -50,8 +50,8 @@ STM32F4_Eval_Firmware.bin \
 all: STM32F4_Eval_Firmware.elf secondary-outputs
 
 # Tool invocations
-STM32F4_Eval_Firmware.elf: $(OBJS) $(USER_OBJS) C:\Users\mccuskert\Desktop\Projects\STM32F4_Eval\STM32F4_Eval_Firmware\STM32F405RGTX_FLASH.ld
-	arm-none-eabi-gcc -o "STM32F4_Eval_Firmware.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\mccuskert\Desktop\Projects\STM32F4_Eval\STM32F4_Eval_Firmware\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F4_Eval_Firmware.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32F4_Eval_Firmware.elf: $(OBJS) $(USER_OBJS) C:\Users\mccuskert\Documents\GitHub\STM32F4_Eval_Firmware\STM32F405RGTX_FLASH.ld
+	arm-none-eabi-gcc -o "STM32F4_Eval_Firmware.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\mccuskert\Documents\GitHub\STM32F4_Eval_Firmware\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F4_Eval_Firmware.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "main.h"
 #include "eval.h"
+#include "eval_timers.h"
+#include "LED_Service.h"
 
 //Private defines
-#define UART_PERIOD_1S		1000
-#define BLINK_PERIOD_500MS	500
-#define BLINK_PERIOD_250MS	250
-
 #define TEMP_ADC_GAIN		0.0342
 #define TEMP_ADC_OFFSET		14
 
@@ -18,27 +15,23 @@
 void Update_Timers(void);
 void ADC_Service(void);
 void UART_Service(void);
-void Blink_LED(uint16_t period);
+void LED_Service();
+void initTimers(void);
 
 // HAL Structs
-extern ADC_HandleTypeDef hadc1;
-
-extern I2C_HandleTypeDef hi2c1;
-
 extern TIM_HandleTypeDef htim11;
-
-extern UART_HandleTypeDef huart3;
 
 // Private global variables
 _Bool tim11_OvrFlo_Flag = FALSE;
 
-uint32_t blinkCounter_1ms = 0U;
-
-uint32_t UART_Counter_1ms = 0U;
+const uint16_t system_timer_overflow[NUM_SYS_TIMERS] =
+{
+		TIME1MS_1MS,	// ADC_Sample
+		TIME1MS_500MS,	// LED_BLINK
+		TIME1MS_1S	    // UART_TX
+};
 
 char msg[MESSAGE_LENGTH] = {0};
-
-uint16_t blinkCnt = 0U;
 
 uint16_t temp_ADC = 0U;
 
@@ -53,13 +46,15 @@ float SysTemp = 0;
  */
 void System_Control()
 {
+	initTimers();
+	LED_Set_Mode(MODE_BLINK);
 
 	while(INFINITY)
 	{
 		Update_Timers();
 		ADC_Service();
 		UART_Service();
-		Blink_LED(BLINK_PERIOD_250MS);
+		LED_Service();
 
 	}
 }
@@ -77,9 +72,22 @@ void Update_Timers(void)
 	{
 		tim11_OvrFlo_Flag = FALSE;
 
-		blinkCounter_1ms++;
+		for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
+		{
+			if(!timer[idx].lock)
+			{
+				++timer[idx].t;
 
-		UART_Counter_1ms++;
+				if(system_timer_overflow[idx] <= timer[idx].t)
+				{
+				    timer[idx].flag = TRUE;
+				}
+			}
+			else
+			{
+				timer[idx].t = 0U;
+			}
+		}
 	}
 }
 
@@ -108,9 +116,10 @@ void ADC_Service()
  */
 void UART_Service()
 {
-	if(UART_PERIOD_1S <= UART_Counter_1ms)
+	if(timer[UART_TX].flag)
 	{
-		UART_Counter_1ms = 0U;
+		timer[UART_TX].flag = FALSE;
+		timer[UART_TX].t = 0U;
 
 		sprintf(msg, "Temp raw: %hu\n\r", temp_ADC);
 
@@ -119,30 +128,14 @@ void UART_Service()
 }
 
 
-/* Blink_LED()
- *
- * Blinks R2D2's led at given period
- * Args: period (unsigned 16 bit)
- * Returns: N/A
- */
-void Blink_LED(uint16_t period)
+void initTimers(void)
 {
-	static _Bool led_level = LEVEL_LOW;
-
-	if(period <= blinkCounter_1ms)
+	for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
 	{
-		blinkCounter_1ms = 0U;
-
-		led_level = !led_level;
-
-		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, led_level);
-
-		if(LEVEL_HIGH == led_level)
-		{
-			blinkCnt++;
-		}
+		timer[idx].t = 0U;
+		timer[idx].flag = FALSE;
+		timer[idx].lock = FALSE;    // TODO: Should init to TRUE
 	}
-
 }
 
 
