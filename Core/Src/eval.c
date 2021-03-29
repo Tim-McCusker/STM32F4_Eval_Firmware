@@ -11,8 +11,8 @@
 
 
 // Function Prototypes
-void Update_Timers(void);
 void initTimers(void);
+void Update_Timers(void);
 
 // HAL Structs
 extern TIM_HandleTypeDef htim11;

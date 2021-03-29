@@ -3,6 +3,7 @@
 
 #include "main.h"
 
+// Public Defines
 #define INFINITY		1
 #define TRUE			1
 #define FALSE			0

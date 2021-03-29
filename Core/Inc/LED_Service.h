@@ -8,7 +8,7 @@
 #ifndef INC_LED_SERVICE_H_
 #define INC_LED_SERVICE_H_
 
-
+// Public Variables
 typedef enum LED_Mode_e
 {
 	MODE_OFF = 0U,
@@ -16,7 +16,7 @@ typedef enum LED_Mode_e
 	MODE_BLINK = 2U
 }LED_Mode_t;
 
-
+// Public Functions
 void LED_Service();
 void LED_Set_Mode(LED_Mode_t mode);
 
