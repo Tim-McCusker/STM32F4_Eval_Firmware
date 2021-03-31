@@ -8,25 +8,24 @@
 #include <stdio.h>
 
 #include "eval.h"
-#include "eval_timers.h"
 #include "UART_Service.h"
 #include "ADC_Service.h"
 
 
 // Private defines
-#define TEMP_ADC_GAIN		0.0342
+#define TEMP_ADC_GAIN		(float)0.0342
 #define TEMP_ADC_OFFSET		14
-
-#define TEMP_ADC_GAIN_2		-0.0021
-#define TEMP_ADC_OFFSET_2	100
 
 #define TEMP_NUM_SAMPLES    128
 #define TEMP_SHIFT          7
 
 
-// Private globals
-char adc_msg[MESSAGE_LENGTH] = {0};
+// Public globals
 double SysTemp = 0;
+
+
+// Private globals
+static char adc_msg[MESSAGE_LENGTH] = {0};
 
 
 void ADC_Sample(void);

@@ -9,10 +9,11 @@
 #include <string.h>
 
 #include "eval.h"
-#include "eval_timers.h"
 #include "UART_Service.h"
 
-char tx_msg[MESSAGE_LENGTH] = {0};
+
+static char tx_msg[MESSAGE_LENGTH] = {0};
+
 
 void UART_Tx(void);
 
@@ -43,7 +44,7 @@ void UART_Set_Tx_Msg(char *mess)
  */
 void UART_Tx()
 {
-	if(timer[UART_TX].flag)
+	if(1U == timer[UART_TX].flag)
 	{
 		RESET_TIMER((&timer[UART_TX]), TIMER_RUN);
 

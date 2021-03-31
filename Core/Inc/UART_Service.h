@@ -8,8 +8,13 @@
 #ifndef INC_UART_SERVICE_H_
 #define INC_UART_SERVICE_H_
 
+
 // Public Defines
 #define MESSAGE_LENGTH		128
+
+
+extern UART_HandleTypeDef huart3;
+
 
 // Public Functions
 void UART_Service(void);

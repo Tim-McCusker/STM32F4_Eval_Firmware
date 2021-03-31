@@ -6,15 +6,15 @@
  */
 
 #include "eval.h"
-#include "eval_timers.h"
 #include "LED_Service.h"
 
 
 #define BLINK_PERIOD    500U	//500ms
 
-LED_Mode_t LED_Mode = MODE_OFF;
 
-uint16_t blinkCnt = 0U;
+static LED_Mode_t LED_Mode = MODE_OFF;
+static uint16_t blinkCnt = 0U;
+
 
 void LED_Control(LED_Mode_t mode);
 
@@ -47,7 +47,7 @@ void LED_Set_Mode(LED_Mode_t mode)
  */
 void LED_Control(LED_Mode_t mode)
 {
-	static _Bool led_level = LEVEL_LOW;
+	static uint8_t led_level = LEVEL_LOW;
 
 	switch(mode)
 	{
@@ -81,6 +81,4 @@ void LED_Control(LED_Mode_t mode)
 	default:
 	break;
 	}
-
-
 }

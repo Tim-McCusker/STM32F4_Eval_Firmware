@@ -61,6 +61,7 @@ static void MX_USART3_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
+extern void System_Init();	    //eval.c
 extern void System_Control();	//eval.c	infinite loop
 
 /* USER CODE END PFP */
@@ -108,6 +109,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  System_Init();
   System_Control();
 
     /* USER CODE END WHILE */
