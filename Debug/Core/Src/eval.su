@@ -1,5 +1,0 @@
-eval.c:45:6:System_Init	8	static
-eval.c:60:6:System_Control	8	static
-eval.c:78:6:Update_Timers	16	static
-eval.c:117:6:initTimers	16	static
-eval.c:134:6:HAL_TIM_PeriodElapsedCallback	16	static
