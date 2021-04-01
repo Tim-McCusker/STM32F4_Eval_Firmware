@@ -1,3 +1,3 @@
-ADC_Service.c:35:6:ADC_Service	8	static
-ADC_Service.c:47:6:ADC_Sample	24	static
-ADC_Service.c:75:7:ADC_Get_SysTemp	16	static
+ADC_Service.c:34:6:ADC_Service	8	static
+ADC_Service.c:46:6:ADC_Sample	24	static
+ADC_Service.c:74:8:ADC_Get_SysTemp	8	static
