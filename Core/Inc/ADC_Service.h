@@ -17,6 +17,7 @@ extern double SysTemp;
 
 
 // Public Functions
+void ADC_Service_Init(void);
 void ADC_Service(void);
 double ADC_Get_SysTemp(void);
 

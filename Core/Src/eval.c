@@ -1,3 +1,10 @@
+/*
+ * eval.c
+ *
+ *  Created on: Mar 28, 2021
+ *      Author: mccuskert
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -7,12 +14,17 @@
 #include "LED_Service.h"
 
 
-//Private defines
+// Private defines
 
 
-// Function Prototypes
+// Private functions
 static void initTimers(void);
+static void initGPIO(void);
 static void Update_Timers(void);
+static void Monitor_Inputs(void);
+static void System_Services_Init(void);
+static void System_Services(void);
+static void Set_Outputs(void);
 
 
 // HAL Structs
@@ -21,18 +33,23 @@ extern I2C_HandleTypeDef hi2c1;
 
 
 // Private global variables
-static uint8_t tim11_OvrFlo_Flag = 0U;
+static bool tim11_OvrFlo_Flag = false;
 
-
-// Public global variables
-const uint16_t system_timer_overflow[NUM_SYS_TIMERS] =
+static const uint16_t system_timer_overflow[NUM_SYS_TIMERS] =
 {
-		TIME1MS_1S,     // 0 - SysTimer
-		TIME1MS_1MS,	// 1 - ADC_Sample
+		TIME1MS_1S,     // 0 - SYS_TIME
+		TIME1MS_1MS,	// 1 - ADC_SAMPLE
 		TIME1MS_500MS,	// 2 - LED_BLINK
 		TIME1MS_1S	    // 3 - UART_TX
 };
 
+static const bool output_active[NUM_OUTPUTS] =
+{
+		LEVEL_HIGH
+};
+
+
+// Public global variables
 uint32_t SysTimeInSeconds = 0U;
 
 
@@ -45,7 +62,10 @@ uint32_t SysTimeInSeconds = 0U;
 void System_Init()
 {
 	initTimers();
-	LED_Set_Mode(MODE_BLINK);
+	RESET_TIMER((&timer[SYS_TIME]), TIMER_RUN);
+
+	initGPIO();
+	System_Services_Init();
 
 	SysTimeInSeconds = 0U;
 }
@@ -62,9 +82,54 @@ void System_Control()
 	while(INFINITY)
 	{
 		Update_Timers();
-		ADC_Service();
-		UART_Service();
-		LED_Service();
+		Monitor_Inputs();
+		System_Services();
+		Set_Outputs();
+	}
+}
+
+
+/* System_Services_Init()
+ *
+ * Initializes system services
+ * Args: N/A
+ * Returns: N/A
+ */
+static void System_Services_Init()
+{
+    ADC_Service_Init();
+    UART_Service_Init();
+    LED_Service_Init();
+}
+
+
+/* System_Services()
+ *
+ * Runs the application services
+ * Args: N/A
+ * Returns: N/A
+ */
+static void System_Services()
+{
+	ADC_Service();
+	UART_Service();
+	LED_Service();
+}
+
+
+/* initTimers()
+ *
+ * Initialize system timers
+ * Args: N/A
+ * Returns: N/A
+ */
+static void initTimers(void)
+{
+	for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
+	{
+		timer[idx].t = 0U;
+		timer[idx].flag = false;
+		timer[idx].lock = true;
 	}
 }
 
@@ -75,21 +140,21 @@ void System_Control()
  * Args: N/A
  * Returns: N/A
  */
-void Update_Timers(void)
+static void Update_Timers(void)
 {
-	if(1U == tim11_OvrFlo_Flag)
+	if(true == tim11_OvrFlo_Flag)
 	{
-		tim11_OvrFlo_Flag = 0U;
+		tim11_OvrFlo_Flag = false;
 
 		for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
 		{
-			if(0U == timer[idx].lock)
+			if(false == timer[idx].lock)
 			{
 				++timer[idx].t;
 
 				if(system_timer_overflow[idx] <= timer[idx].t)
 				{
-				    timer[idx].flag = 1U;
+				    timer[idx].flag = true;
 				}
 			}
 			else
@@ -99,7 +164,7 @@ void Update_Timers(void)
 		}
 	}
 
-	if(1U == timer[SYS_TIME].flag)
+	if(true == timer[SYS_TIME].flag)
 	{
 		RESET_TIMER((&timer[SYS_TIME]), TIMER_RUN);
 
@@ -108,19 +173,51 @@ void Update_Timers(void)
 }
 
 
-/* initTimers()
+/* initGPIO()
  *
- * Initialize system timers
+ * Initialize system GPIO
  * Args: N/A
  * Returns: N/A
  */
-void initTimers(void)
+static void initGPIO(void)
 {
-	for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
+    output[LED_STATUS].port = LED_Status_GPIO_Port;
+    output[LED_STATUS].pin = LED_Status_Pin;
+    output[LED_STATUS].cmd = LEVEL_LOW;
+    output[LED_STATUS].cmd_last = LEVEL_HIGH;
+}
+
+
+/* Monitor_Inputs()
+ *
+ * Monitor system inputs
+ * Args: N/A
+ * Returns: N/A
+ */
+static void Monitor_Inputs()
+{
+	//XXX: No inputs to monitor
+}
+
+
+/* Set_Outputs()
+ *
+ * Update system output states
+ * Args: N/A
+ * Returns: N/A
+ */
+static void Set_Outputs()
+{
+	for(uint8_t i = 0; i < NUM_OUTPUTS; i++)
 	{
-		timer[idx].t = 0U;
-		timer[idx].flag = 0U;
-		timer[idx].lock = 0U;    // TODO: Should init to TRUE
+		if(output[i].cmd != output[i].cmd_last)
+		{
+			bool level = output[i].cmd ? output_active[i] : !output_active[i];
+
+			HAL_GPIO_WritePin(output[i].port, output[i].pin, level);
+
+			output[i].cmd_last = output[i].cmd;
+		}
 	}
 }
 
@@ -133,5 +230,5 @@ void initTimers(void)
  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	tim11_OvrFlo_Flag = 1U;
+	tim11_OvrFlo_Flag = true;
 }

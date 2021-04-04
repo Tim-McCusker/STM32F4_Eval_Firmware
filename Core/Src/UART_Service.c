@@ -12,10 +12,26 @@
 #include "UART_Service.h"
 
 
+// Private globals
 static char tx_msg[MESSAGE_LENGTH] = {0};
 
 
-void UART_Tx(void);
+// Private Functions
+static void UART_Tx(void);
+
+
+/* UART_Service_Init()
+ *
+ * Initializes UART_Service
+ * Args: N/A
+ * Returns: N/A
+ */
+void UART_Service_Init(void)
+{
+	memset(tx_msg, 0, MESSAGE_LENGTH);
+
+	RESET_TIMER((&timer[UART_TX]), TIMER_RUN);
+}
 
 
 /* UART_Service()
@@ -42,9 +58,9 @@ void UART_Set_Tx_Msg(char *mess)
  * Args: N/A
  * Returns: N/A
  */
-void UART_Tx()
+static void UART_Tx()
 {
-	if(1U == timer[UART_TX].flag)
+	if(true == timer[UART_TX].flag)
 	{
 		RESET_TIMER((&timer[UART_TX]), TIMER_RUN);
 

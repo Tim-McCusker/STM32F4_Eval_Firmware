@@ -22,7 +22,8 @@ typedef enum LED_Mode_e
 
 
 // Public Functions
-void LED_Service();
+void LED_Service_Init(void);
+void LED_Service(void);
 void LED_Set_Mode(LED_Mode_t mode);
 
 #endif /* INC_LED_SERVICE_H_ */

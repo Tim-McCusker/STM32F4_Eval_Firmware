@@ -8,15 +8,30 @@
 #include "eval.h"
 #include "LED_Service.h"
 
-
+// Private defines
 #define BLINK_PERIOD    500U	//500ms
 
 
+// Private globals
 static LED_Mode_t LED_Mode = MODE_OFF;
 static uint16_t blinkCnt = 0U;
 
 
-void LED_Control(LED_Mode_t mode);
+// Private functions
+static void LED_Control(LED_Mode_t mode);
+
+
+/* LED_Service_Init()
+ *
+ * Initialize LED_Service
+ */
+void LED_Service_Init(void)
+{
+	blinkCnt = 0U;
+	LED_Set_Mode(MODE_BLINK);
+
+	RESET_TIMER((&timer[LED_BLINK]), TIMER_RUN);
+}
 
 
 /* LED_Service()
@@ -45,19 +60,19 @@ void LED_Set_Mode(LED_Mode_t mode)
  * Handle LED given current LED mode
  * Arg: (LED_Mode_t) mode - LED mode defined in LED_Service.h
  */
-void LED_Control(LED_Mode_t mode)
+static void LED_Control(LED_Mode_t mode)
 {
 	static uint8_t led_level = LEVEL_LOW;
 
 	switch(mode)
 	{
 	case MODE_OFF:
-		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, LEVEL_LOW);
+		output[LED_STATUS].cmd = LEVEL_LOW;
 
 	break;
 
 	case MODE_SOLID:
-		HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, LEVEL_HIGH);
+		output[LED_STATUS].cmd = LEVEL_HIGH;
 
 	break;
 
@@ -68,7 +83,7 @@ void LED_Control(LED_Mode_t mode)
 
 			led_level = !led_level;
 
-			HAL_GPIO_WritePin(LED_Status_GPIO_Port, LED_Status_Pin, led_level);
+			output[LED_STATUS].cmd = led_level;
 
 			if(LEVEL_HIGH == led_level)
 			{

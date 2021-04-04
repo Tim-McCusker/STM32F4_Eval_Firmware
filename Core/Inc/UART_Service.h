@@ -17,6 +17,7 @@ extern UART_HandleTypeDef huart3;
 
 
 // Public Functions
+void UART_Service_Init(void);
 void UART_Service(void);
 void UART_Set_Tx_Msg(char *mess);
 

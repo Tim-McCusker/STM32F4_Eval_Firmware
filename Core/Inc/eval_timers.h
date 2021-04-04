@@ -45,8 +45,8 @@
 typedef struct SYS_Timer
 {
 	uint32_t t;
-	uint8_t flag;
-	uint8_t lock;
+	bool flag;
+	bool lock;
 }system_timer_t;
 
 
@@ -60,7 +60,6 @@ const enum system_timers
 
 
 volatile system_timer_t timer[NUM_SYS_TIMERS];
-extern const uint16_t system_timer_overflow[NUM_SYS_TIMERS];
 extern uint32_t SysTimeInSeconds;
 
 
