@@ -9,7 +9,7 @@
 #define INC_LED_SERVICE_H_
 
 
-// Public Types
+// -- Public Types
 typedef enum LED_Mode_e
 {
 	MODE_OFF,
@@ -18,12 +18,12 @@ typedef enum LED_Mode_e
 }LED_Mode_t;
 
 
-// Public Variables
+// -- Public Variables
 
 
-// Public Functions
-void LED_Service_Init(void);
-void LED_Service(void);
-void LED_Set_Mode(LED_Mode_t mode);
+// -- Public Functions
+extern void LED_Service_Init(void);
+extern void LED_Service(void);
+extern void LED_Set_Mode(LED_Mode_t mode);
 
 #endif /* INC_LED_SERVICE_H_ */

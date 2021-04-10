@@ -13,7 +13,7 @@
 #include "ADC_Service.h"
 
 
-// Private defines
+// -- Private defines
 #define TEMP_ADC_GAIN		(float)0.0342
 #define TEMP_ADC_OFFSET		14
 
@@ -21,15 +21,19 @@
 #define TEMP_SHIFT          7
 
 
-// Public globals
+// -- Public globals
+
+
+// -- Private globals
+
+// Value for system temperature in degC
 double SysTemp = 0.0;
 
-
-// Private globals
+// Character buffer for message from ADC to UART
 static char adc_msg[MESSAGE_LENGTH] = {0};
 
 
-// Private Functions
+// -- Private Functions
 static void ADC_Sample(void);
 
 
@@ -60,6 +64,18 @@ void ADC_Service(void)
 }
 
 
+/* ADC_Get_SysTemp()
+ *
+ * Retrieve system temperature
+ * Args: N/A
+ * Returns: SysTemp - System temperature
+ */
+double ADC_Get_SysTemp(void)
+{
+	return SysTemp;
+}
+
+
 /* ADC_Sample()
  *
  * Polls ADC1 for System Temp. Calculates real deg C.
@@ -87,7 +103,7 @@ static void ADC_Sample(void)
 	    {
 		    SysTemp = TEMP_ADC_GAIN * (ADC_Avg >> TEMP_SHIFT) + TEMP_ADC_OFFSET;
 
-		    sprintf(adc_msg, "Temp ADC: %lu\n\rTemp C: %f\n\r", ADC_Avg, SysTemp);
+		    snprintf(adc_msg, MESSAGE_LENGTH, "Temp ADC: %lu\n\rTemp C: %f\n\r", ADC_Avg, SysTemp);
 
 		    UART_Set_Tx_Msg(adc_msg);
 
@@ -96,10 +112,4 @@ static void ADC_Sample(void)
 	    }
 
     }
-}
-
-
-double ADC_Get_SysTemp(void)
-{
-	return SysTemp;
 }

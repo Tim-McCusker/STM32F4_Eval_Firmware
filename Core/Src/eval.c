@@ -14,10 +14,42 @@
 #include "LED_Service.h"
 
 
-// Private defines
+// -- Private defines
 
 
-// Private functions
+// HAL Structs
+extern TIM_HandleTypeDef htim11;
+extern I2C_HandleTypeDef hi2c1;
+
+
+// -- Public global variables
+
+// Time in seconds since application boot
+uint32_t SysTimeInSeconds = 0U;
+
+
+// -- Private global variables
+
+// Set true when timer 11 overflows, set false after timers are updated
+static bool tim11_OvrFlo_Flag = false;
+
+// Overflow counts in 1ms resolution
+static const uint16_t system_timer_overflow[NUM_TIMERS] =
+{
+		TIME1MS_1S,     // 0 - SYS_TIME
+		TIME1MS_1MS,	// 1 - ADC_SAMPLE
+		TIME1MS_500MS,	// 2 - LED_BLINK
+		TIME1MS_1S	    // 3 - UART_TX
+};
+
+// Active logic levels for each output GPIO pin
+static const bool output_active[NUM_OUTPUTS] =
+{
+		LEVEL_HIGH      // 0 - LED_STATUS
+};
+
+
+// -- Private functions
 static void initTimers(void);
 static void initGPIO(void);
 static void Update_Timers(void);
@@ -26,31 +58,6 @@ static void System_Services_Init(void);
 static void System_Services(void);
 static void Set_Outputs(void);
 
-
-// HAL Structs
-extern TIM_HandleTypeDef htim11;
-extern I2C_HandleTypeDef hi2c1;
-
-
-// Private global variables
-static bool tim11_OvrFlo_Flag = false;
-
-static const uint16_t system_timer_overflow[NUM_SYS_TIMERS] =
-{
-		TIME1MS_1S,     // 0 - SYS_TIME
-		TIME1MS_1MS,	// 1 - ADC_SAMPLE
-		TIME1MS_500MS,	// 2 - LED_BLINK
-		TIME1MS_1S	    // 3 - UART_TX
-};
-
-static const bool output_active[NUM_OUTPUTS] =
-{
-		LEVEL_HIGH
-};
-
-
-// Public global variables
-uint32_t SysTimeInSeconds = 0U;
 
 
 /* System_Init()
@@ -125,7 +132,7 @@ static void System_Services()
  */
 static void initTimers(void)
 {
-	for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
+	for(uint8_t idx = 0U; idx < NUM_TIMERS; idx++)
 	{
 		timer[idx].t = 0U;
 		timer[idx].flag = false;
@@ -146,7 +153,7 @@ static void Update_Timers(void)
 	{
 		tim11_OvrFlo_Flag = false;
 
-		for(uint8_t idx = 0U; idx < NUM_SYS_TIMERS; idx++)
+		for(uint8_t idx = 0U; idx < NUM_TIMERS; idx++)
 		{
 			if(false == timer[idx].lock)
 			{
@@ -212,6 +219,7 @@ static void Set_Outputs()
 	{
 		if(output[i].cmd != output[i].cmd_last)
 		{
+			//XXX: Abstraction from physical logic level, all FW GPIO logic is active high
 			bool level = output[i].cmd ? output_active[i] : !output_active[i];
 
 			HAL_GPIO_WritePin(output[i].port, output[i].pin, level);

@@ -12,11 +12,13 @@
 #include "UART_Service.h"
 
 
-// Private globals
+// -- Private globals
+
+// Character buffer to transmit over UART
 static char tx_msg[MESSAGE_LENGTH] = {0};
 
 
-// Private Functions
+// -- Private Functions
 static void UART_Tx(void);
 
 
@@ -46,6 +48,12 @@ void UART_Service(void)
 }
 
 
+/* UART_Set_Tx_Msg()
+ *
+ * Set message to transmit over UART
+ * Args: *mess - char pointer
+ * Returns: N/A
+ */
 void UART_Set_Tx_Msg(char *mess)
 {
 	memcpy(&tx_msg, mess, MESSAGE_LENGTH);

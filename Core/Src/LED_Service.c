@@ -8,22 +8,28 @@
 #include "eval.h"
 #include "LED_Service.h"
 
-// Private defines
+// -- Private defines
 #define BLINK_PERIOD    500U	//500ms
 
 
-// Private globals
+// -- Private globals
+
+// Mode of operation for LED_STATUS
 static LED_Mode_t LED_Mode = MODE_OFF;
-static uint16_t blinkCnt = 0U;
+
+// Number of LED_STATUS blinks since boot
+static uint32_t blinkCnt = 0U;
 
 
-// Private functions
+// -- Private functions
 static void LED_Control(LED_Mode_t mode);
 
 
 /* LED_Service_Init()
  *
  * Initialize LED_Service
+ * Args: N/A
+ * Returns: N/A
  */
 void LED_Service_Init(void)
 {
@@ -37,6 +43,8 @@ void LED_Service_Init(void)
 /* LED_Service()
  *
  * Runs LED_Service
+ * Args: N/A
+ * Returns: N/A
  */
 void LED_Service(void)
 {
@@ -46,8 +54,9 @@ void LED_Service(void)
 
 /* LED_Set_Mode()
  *
- * Update LED mode
- * Arg: (LED_Mode_t) mode - LED mode defined in LED_Service.h
+ * Set mode of operation for LED_STATUS
+ * Arg: (LED_Mode_t) mode - Mode of operation
+ * Returns: N/A
  */
 void LED_Set_Mode(LED_Mode_t mode)
 {
@@ -58,7 +67,8 @@ void LED_Set_Mode(LED_Mode_t mode)
 /* LED_Control()
  *
  * Handle LED given current LED mode
- * Arg: (LED_Mode_t) mode - LED mode defined in LED_Service.h
+ * Arg: (LED_Mode_t) mode - Mode of operation
+ * Returns: N/A
  */
 static void LED_Control(LED_Mode_t mode)
 {

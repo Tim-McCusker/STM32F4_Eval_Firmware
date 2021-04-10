@@ -8,6 +8,8 @@
 #ifndef INC_EVAL_TIMERS_H_
 #define INC_EVAL_TIMERS_H_
 
+// -- Public Defines
+
 // Time constants in 1ms resolution
 #define TIME1MS_1MS		1U
 #define TIME1MS_10MS	10U
@@ -30,11 +32,10 @@
 #define TIME1MS_3S		3000U
 #define TIME1MS_4S		4000U
 
-#define NUM_SYS_TIMERS  (4U)
-
 #define TIMER_STOP	((_Bool) 1)
 #define TIMER_RUN	((_Bool) 0)
 
+// -- Public Macros
 #define RESET_TIMER(timer, stop_go) ({ 	\
 	    timer->lock = stop_go;			\
 		timer->flag = 0U;			    \
@@ -42,6 +43,7 @@
     	})
 
 
+// -- Public Types
 typedef struct SYS_Timer
 {
 	uint32_t t;
@@ -55,11 +57,16 @@ const enum system_timers
 	SYS_TIME,
 	ADC_SAMPLE,
 	LED_BLINK,
-	UART_TX
+	UART_TX,
+	NUM_TIMERS    //XXX: Always leave as last element in enum
 }system_timers;
 
 
-volatile system_timer_t timer[NUM_SYS_TIMERS];
+// -- Public globals
+
+// Array of SYS_Timer structs - corresponds with system_timers enum
+volatile system_timer_t timer[NUM_TIMERS];
+
 extern uint32_t SysTimeInSeconds;
 
 

@@ -8,15 +8,17 @@
 #ifndef INC_EVAL_GPIO_H_
 #define INC_EVAL_GPIO_H_
 
+// -- Public Defines
 #define LEVEL_LOW		0
 #define LEVEL_HIGH		1
 
-#define NUM_OUTPUTS    (1U)
 
-enum outputs
+// -- Public Types
+const enum outputs
 {
-    LED_STATUS
-};
+    LED_STATUS,
+	NUM_OUTPUTS    //XXX: Always leave as last element in enum
+}outputs;
 
 typedef struct system_gpio_out
 {
@@ -27,6 +29,10 @@ typedef struct system_gpio_out
     bool cmd_last;
 }system_gpio_out_t;
 
+
+// -- Public Globals
+
+// Array of output system_gpio_out struct, corresponds with outputs enum
 volatile system_gpio_out_t output[NUM_OUTPUTS];
 
 #endif /* INC_EVAL_GPIO_H_ */

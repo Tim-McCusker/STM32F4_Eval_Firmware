@@ -13,12 +13,13 @@
 extern ADC_HandleTypeDef hadc1;
 
 
+// -- Public Variables
 extern double SysTemp;
 
 
-// Public Functions
-void ADC_Service_Init(void);
-void ADC_Service(void);
-double ADC_Get_SysTemp(void);
+// -- Public Functions
+extern void ADC_Service_Init(void);
+extern void ADC_Service(void);
+extern double ADC_Get_SysTemp(void);
 
 #endif /* INC_ADC_SERVICE_H_ */
